@@ -94,8 +94,13 @@ class baseJustimmoActions extends sfActions
         /** @var Justimmo\Model\EmployeeQuery $query */
         $query = $this->container->get('justimmo.query.employee');
 
-        // @todo: how to get employee categories?
         $this->employees = $query->find();
+        $this->categories = array();
+        
+        /** @var Justimmo\Model\Employee $employee */
+        foreach ($this->employees as $employee) {
+            $this->categories[$employee->getCategory()][] = $employee;
+        }
     }
 
     public function executeEmployeeDetail(sfWebRequest $request)
