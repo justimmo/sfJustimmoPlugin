@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
-<!-- Copy this file to project/config and load it in the ProjectConfiguration when creating the DIC -->
-<!-- Update parameter values as required -->
+<!-- Copy this file to your project's ./config folder and load it in the ProjectConfiguration when creating the DIC -->
+<!-- Update parameter values as required, e.g., username, password -->
 
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
