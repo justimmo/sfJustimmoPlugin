@@ -5,9 +5,12 @@ __Composer dependencies:__
 
 
 ```
-"justimmo/php-sdk": "1.0.*",
-"symfony/dependency-injection": "2.4.*",
-"symfony/config": "2.4.*"
+"require": {
+    "justimmo/php-sdk":              "1.0.*",
+    "symfony/dependency-injection":  "2.4.*",
+    "symfony/config":                "2.4.*",
+    "monolog/monolog":               "1.7.*"
+},
 ```
 
 Symfony 1 __ProjectConfiguration.class.php__
