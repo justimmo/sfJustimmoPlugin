@@ -2,6 +2,7 @@
 <!-- Copy this file to your project's ./config folder and load it in the ProjectConfiguration when creating the DIC -->
 <!-- Update parameter values as required, e.g., username, password -->
 
+
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
@@ -10,7 +11,8 @@
         <parameter key="justimmo.username"></parameter>
         <parameter key="justimmo.password"></parameter>
         <parameter key="justimmo.api.class">Justimmo\Api\JustimmoApi</parameter>
-        <parameter key="justimmo.logger.class">Psr\Log\NullLogger</parameter>
+        <parameter key="justimmo.logger.class">Monolog\Logger</parameter>
+        <parameter key="justimmo.logger.webdebughandler.class">JustimmoWebDebugHandler</parameter>
         <parameter key="justimmo.cache.class">Justimmo\Cache\NullCache</parameter>
 
         <parameter key="justimmo.realty.mapper">Justimmo\Model\Mapper\V1\RealtyMapper</parameter>
@@ -27,7 +29,13 @@
     </parameters>
 
     <services>
-        <service id="justimmo.logger" class="%justimmo.logger.class%"></service>
+        <service id="justimmo.webdebug.handler" class="%justimmo.logger.webdebughandler.class%"></service>
+        <service id="justimmo.logger" class="%justimmo.logger.class%">
+            <argument type="string">justimmo</argument>
+            <call method="pushHandler">
+                <argument type="service" id="justimmo.webdebug.handler"/>
+            </call>
+        </service>
 
         <service id="justimmo.cache" class="%justimmo.cache.class%"></service>
 
@@ -73,3 +81,4 @@
     </services>
 
 </container>
+

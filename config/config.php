@@ -11,5 +11,5 @@ if (in_array('justimmo', sfConfig::get('sf_enabled_modules'))) {
 // Load the Justimmo Plugin debug bar for easily viewing what the plugin is doing e.g., requests, logs, etc
 $this->dispatcher->connect(
     'debug.web.load_panels',
-    array('JustimmoPluginWebDebugPanel', 'listenToLoadDebugWebPanelEvent')
+    array('JustimmoWebDebugPanel', 'listenToLoadDebugWebPanelEvent')
 );

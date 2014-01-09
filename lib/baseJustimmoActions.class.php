@@ -96,7 +96,7 @@ class baseJustimmoActions extends sfActions
 
         $this->employees = $query->find();
         $this->categories = array();
-        
+
         /** @var Justimmo\Model\Employee $employee */
         foreach ($this->employees as $employee) {
             $this->categories[$employee->getCategory()][] = $employee;
