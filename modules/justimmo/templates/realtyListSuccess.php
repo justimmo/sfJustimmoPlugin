@@ -33,37 +33,13 @@
         </section>
 
         <?php foreach ($pager as $realty): ?>
-            <?php
-            $realty_classes = array(
-                'justimmo',
-                'realty',
-                'realty-' . $realty->getId(),
-            );
-            if ($realty->getStatus() != '') {
-                array_push(
-                    $realty_classes,
-                    'realty-' . preg_replace('/\W+/', '', strtolower(strip_tags($realty->getStatus())))
-                );
-            }
-            ?>
-
-            <a class="<?php echo implode(' ', $realty_classes); ?>"
+            <a class="<?php echo realty_css_classes($realty); ?>"
                href="<?php echo url_for('@justimmo_realty_detail?id=' . $realty->getId()); ?>"
                title="<?php echo $realty->getTitle(); ?>">
                 <div class="image">
-                    <?php
-                    $pictures = $realty->getPictures();
-                    /** @var Justimmo\Model\Attachment $first_picture */
-                    $first_picture = $pictures[0];
-                    $picture_url = '';
-                    if (isset($first_picture)) {
-                        $picture_url = $first_picture->getUrl('orig');
-                    }
-                    ?>
-
                     <img alt="<?php echo $realty->getTitle(); ?>"
                          title="<?php echo $realty->getTitle(); ?>"
-                         src="<?php echo $picture_url == '' ? '/images/noimage.jpg' : $picture_url; ?>"/>
+                         src="<?php echo realty_picture_url($realty->getPictures(), 0, 'orig'); ?>"/>
                 </div>
 
                 <div class="description">
@@ -71,7 +47,7 @@
                         <?php echo $realty->getTitle(); ?>
                     </h3>
 
-                    <p><?php echo $realty->getDescription(); ?></p>
+                    <p><?php echo mb_substr(text($realty->getDescription()), 0, 200); ?></p>
                 </div>
 
                 <div class="details">

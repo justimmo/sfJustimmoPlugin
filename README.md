@@ -49,6 +49,14 @@ class ProjectConfiguration extends sfProjectConfiguration
 }
 ```
 
+Enable the Api Helper in apps/frontend/config/settings.yml
+
+```
+all
+  .settings:
+    standard_helpers:       [Partial, Cache, I18N, Api]
+```
+
 You can get a reference to the __$container__ inside your actions by calling:
 
 ```
@@ -64,3 +72,14 @@ $employee_query = $container->get('justimmo.query.employee');
 ```
 
 Please check __services.xml__ for the full list of available services.
+
+
+// @todo: how to overwrite actions and templates after you use the plugin
+
+Make sure the I18N standard helper is enabled in project/application/config/settings.yml
+
+```
+all:
+  .settings:
+    standard_helpers:       [Partial, Cache, I18N]
+```

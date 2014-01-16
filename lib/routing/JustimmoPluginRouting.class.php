@@ -46,6 +46,24 @@ class JustimmoPluginRouting
                 )
             )
         );
+        $r->prependRoute(
+            'justimmo_realty_filter',
+            new sfRoute('/:sf_culture/realty/filter/*',
+                array(
+                    'module' => 'justimmo',
+                    'action' => 'realtyFilter'
+                )
+            )
+        );
+        $r->prependRoute(
+            'justimmo_realty_filter_reset',
+            new sfRoute('/:sf_culture/realty/filter/reset/yes/*',
+                array(
+                    'module' => 'justimmo',
+                    'action' => 'realtyFilter'
+                )
+            )
+        );
 
         // Projects
         $r->prependRoute(

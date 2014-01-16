@@ -65,6 +65,9 @@ $gallery_images_count = count($project->bilder->bild);
 <div class="aside">
     <h2><?php echo __('Kontakt'); ?></h2>
     <?php // include_component('immobilien', 'teamMember', array('team_member_id' => $project->kontaktperson->personennummer)); ?>
+    <?php include_partial('employee', array('employee'=>$project->getContact())); ?>
+
+
 
     <?php /*
     <?php if (count($project->videos->children()) > 0): ?>

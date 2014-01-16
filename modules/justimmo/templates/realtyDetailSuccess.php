@@ -29,10 +29,6 @@
             </p>
         </div>
     <?php else: ?>
-
-        <?php $lat = $realty->getLatitude(); ?>
-        <?php $lng = $realty->getLongitude(); ?>
-
         <div class="top-bar">
             <p class="navigation">
                 <a href="<?php echo url_for("@justimmo_realty_detail?id=" . $realty->getId()); ?>"><?php echo __('Vorheriges Objekt'); ?></a> /
@@ -91,11 +87,15 @@
                     </p>
                 <?php endif; ?>
 
-                <?php if ($lat && $lng): ?>
+                <?php if ($realty->getLatitude() && $realty->getLongitude()): ?>
                     <h2><?php echo __('Karte'); ?></h2>
 
                     <div class="google-map-canvas"> <?php // @todo: add data-attributes here for the map ?>
-                        <div id="#map"></div>
+                        <div id="map" class="google-map"
+                             data-lat="<?php echo $realty->getLatitude(); ?>"
+                             data-lng="<?php echo $realty->getLongitude(); ?>"
+                             data-title="<?php echo $realty->getTitle(); ?>"
+                             data-address="<?php echo $realty->getPlace() . ', ' . $realty->getCountry(); ?>"></div>
                     </div>
                 <?php endif; ?>
 
@@ -123,7 +123,14 @@
                     <?php endforeach; ?>
                 <?php endif; ?>
 
-                <?php /* //@todo: leave this out and show it in the gallery???
+                <?php
+
+                echo "<pre>";
+                var_dump($realty->getPictures());
+                
+                echo "</pre>";
+                
+                /* //@todo: leave this out and show it in the gallery???
 
                      if ($grundrisse->count() > 0) : ?>
                     <?php // @todo: make sure this works! ?>
@@ -146,5 +153,7 @@
         </div>
 
         <?php // include_component('immobilien', 'anfrage', array('immobilie' => $realty, 'onr' => $onr, 'id' => $id)); ?>
+        <?php include_partial('employee', array('employee' => $realty->getContact())); ?>
+
     <?php endif; ?>
 </article>

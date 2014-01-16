@@ -6,6 +6,8 @@
  */
 class baseJustimmoActions extends sfActions
 {
+    private $_perPage = 4;
+
     public function preExecute()
     {
         parent::preExecute();
@@ -24,8 +26,10 @@ class baseJustimmoActions extends sfActions
         /** @var Justimmo\Model\RealtyQuery $query */
         $query = $this->container->get('justimmo.query.realty');
 
-//        $this->realties = $query->filterByFloorArea(array('min' => 10, 'max' => 100))->find();
-        $this->realties = $query->find();
+        $this->filter_realty = new baseRealtyFilter();
+        $this->filter_realty->buildQuery($query, $this->getUser()->getAttribute($this->filter_realty->getName(), null, 'justimmo'));
+
+        $this->pager = $query->paginate($request->getParameter('page', 1), $this->_perPage);
     }
 
     public function executeRealtyDetail(sfWebRequest $request)
@@ -36,6 +40,8 @@ class baseJustimmoActions extends sfActions
         $this->forward404Unless($request->getParameter('id', null));
         $this->realty = $query->findPk($request->getParameter('id', null));
         $this->forward404Unless($this->realty);
+
+
     }
 
     public function executeRealtyExpose(sfWebRequest $request)
@@ -51,11 +57,6 @@ class baseJustimmoActions extends sfActions
         return sfView::NONE;
     }
 
-    public function executeRealtySearch(sfWebRequest $request)
-    {
-
-    }
-
     public function executeRealtyInquiry(sfWebRequest $request)
     {
         /** @var Justimmo\Api\JustimmoApi $api */
@@ -66,9 +67,30 @@ class baseJustimmoActions extends sfActions
         return $api->postRealtyInquiry($inquiry_params);
     }
 
+    public function executeRealtyFilter(sfWebRequest $request)
+    {
+        if ($request->hasParameter('reset')) {
+            // @todo: reset filters
+        }
+        if ($request->getMethod() == "POST") {
+            // validate
+            $filter_realty = new baseRealtyFilter();
+            $filter_realty->bind($request->getParameter($filter_realty->getName()));
+
+            if ($filter_realty->isValid()) {
+                // save to session
+                $this->getUser()->setAttribute($filter_realty->getName(), $filter_realty->getValues(), 'justimmo');
+                // use Justimmo.Logger to log any filters that are set
+            }
+            // use Justimmo.Logger to log any errors
+        }
+
+        // redirect to list
+        // @todo: should we add GET params to be able to bookmark/send links with search filters in URL?
+        $this->redirect("@justimmo_realty_list");
+    }
+
     /**
-     * @todo: apply filters?
-     *
      * @param sfWebRequest $request
      */
     public function executeProjectList(sfWebRequest $request)
@@ -76,7 +98,7 @@ class baseJustimmoActions extends sfActions
         /** @var Justimmo\Model\ProjectQuery $query */
         $query = $this->container->get('justimmo.query.project');
 
-        $this->projects = $query->find();
+        $this->pager = $query->paginate($request->getParameter('page', 1), $this->_perPage);
     }
 
     public function executeProjectDetail(sfWebRequest $request)
@@ -94,7 +116,7 @@ class baseJustimmoActions extends sfActions
         /** @var Justimmo\Model\EmployeeQuery $query */
         $query = $this->container->get('justimmo.query.employee');
 
-        $this->employees = $query->find();
+        $this->employees  = $query->find();
         $this->categories = array();
 
         /** @var Justimmo\Model\Employee $employee */

@@ -3,11 +3,14 @@
 class JustimmoWebDebugPanel extends sfWebDebugPanel
 {
     /**
-     * The array gets the messages from the JustimmoWebDebugHandler to be displayed in the panel
+     * The array contains the messages from the JustimmoWebDebugHandler
+     * and are to be displayed in the panel
      *
      * @var array
      */
     private $queries = array();
+    private $all_api_calls = 0;
+    private $cached_api_calls = 0;
 
     public static function listenToLoadDebugWebPanelEvent(sfEvent $event)
     {
@@ -25,18 +28,24 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
     }
 
     /**
-     * The returned array has the following keys: channel, level, formatted (message), datetime
+     * Fetches messages from the Logger and parses them
+     * so they are ready to be displayed in the sfDebugPanel
      *
      * @param array $v
      */
     public function addQuery($v)
     {
-        $this->queries[] = $v;
+        $query = $this->processQuery($v);
+        if ($query) {
+            $this->queries[] = $query;
+        }
     }
 
     public function getTitle()
     {
-        return '<img src="/sfJustimmoPlugin/images/debug.png" alt="' . $this->getPanelTitle() . '" height="16" width="16" /> ' . count($this->queries);
+        return '<img src="/sfJustimmoPlugin/images/debug.png" alt="' .
+        $this->getPanelTitle() . '" height="16" width="16" /> ' .
+        $this->cached_api_calls . ' / ' . $this->all_api_calls;
     }
 
     public function getPanelTitle()
@@ -55,23 +64,26 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
     public function getLogs()
     {
         $html = array();
-        foreach ($this->queries as $i => $query) {
-            $toggler = $this->getToggler('justimmo_debug_' . $i, 'Response Text');
-            /** @var DateTime $time */
-            $time   = $query['datetime'];
-            $html[] = sprintf('
-                <li>
-                    <strong class="sfWebDebugDatabaseQuery">%s %s</strong>
-                    <div class="sfWebDebugDatabaseLogInfo">Time: %s</div>
-                    <div id="justimmo_debug_%s" style="display:none;">
-                        <pre class="pre-scrollable"><code>%s</code></pre>
-                    </div>
-                </li>',
+
+        foreach ($this->queries as $i => $log) {
+            if ($log['text']) {
+                $toggler = $this->getToggler('justimmo_debug_' . $i, 'Response Text');
+            } else {
+                $toggler = "";
+            }
+            $html[] = sprintf('<li>
+    <strong class="sfWebDebugDatabaseQuery">%s %s</strong>
+
+    <div class="sfWebDebugDatabaseLogInfo">%s</div>
+    <div id="justimmo_debug_%s" style="display:none;">
+        <pre class="pre-scrollable"><code>%s</code></pre>
+    </div>
+</li>',
                 $toggler,
-                $query['level'],
-                $time->format('d/m/y H:i:s'),
+                $log['title'],
+                $log['time'],
                 $i,
-                $query['formatted']
+                $log['text']
             );
         }
 
@@ -84,7 +96,7 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
         $doc->formatOutput = true;
 
         // disable errors displayed on screen
-        libxml_use_internal_errors(true);
+        // libxml_use_internal_errors(true);
 
         $doc->loadXML($s);
         $s = $doc->saveXML();
@@ -105,5 +117,63 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
         $s = str_replace("><", "><br /><", $s);
 
         return $s;
+    }
+
+
+    /**
+     * @param $query
+     * @return array
+     */
+    private function processQuery($query)
+    {
+        $title = "";
+        $time  = "";
+        $text  = "";
+
+        // let's see what the message is...
+        $msg     = $query['message'];
+        $context = $query['context'];
+
+        if (strpos($msg, 'begin api call') !== false) {
+            ++$this->all_api_calls;
+            $url   = mb_substr($msg, 17);
+            $title = '<a target="_blank" href="' . $url . '">' . $url . '</a>';
+            $time  = "";
+            $text  = false;
+        }
+        if (strpos($msg, 'cache key is') !== false) {
+            $title = "Cache Key: ";
+            if (strlen($msg) < 15) {
+                $title .= "EMPTY";
+            } else {
+                $title .= mb_substr($msg, 13);
+            }
+            $time = "";
+            $text = false;
+        }
+        if (strpos($msg, 'cache found') !== false) {
+            $title = false;
+            ++$this->cached_api_calls;
+        }
+        if (strpos($msg, 'call end') !== false) {
+            if ($context['cache']) {
+                $title .= '<span style="background-color: #b1e7a4;">';
+            } else {
+                $title .= '<span style="background-color: #ff7777;">';
+            }
+            $title .= "API Response</span>";
+            $time = "Time: " . number_format($context['time'], 5);
+            $text = $this->xml_highlight($context['response']);
+        }
+
+        if ($title != false) {
+            return array(
+                'title' => $title,
+                'time'  => $time,
+                'text'  => $text,
+            );
+        }
+
+        return false;
     }
 }
