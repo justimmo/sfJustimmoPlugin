@@ -35,6 +35,10 @@ function text($text)
     );
 }
 
+/**
+ * @param \Justimmo\Model\Realty $realty
+ * @return string
+ */
 function realty_css_classes($realty)
 {
     $realty_classes = array(
@@ -72,6 +76,28 @@ function realty_picture_url($pictures, $index = 0, $size = 'orig')
     return $picture_url == '' ? '/images/realty-no-image.jpg' : $picture_url;
 }
 
-// function to format "mailto:" with full name and email address (view employee partial)
+
+/**
+ * Format "mailto:" with full name and email address (look at the employee partial)
+ * @param string $name
+ * @param string $email
+ * @return string
+ */
+function format_mailto($name, $email)
+{
+    if (!empty($name)) {
+        return
+            "mailto:" .
+            str_replace(" ", "%20", $name) .
+            "%20" .
+            "%3c" . $email . "%3e";
+    }
+    if (!empty($email)) {
+        return
+            "mailto:" . $email;
+    }
+
+    return '';
+}
 
 // function to show a filter summary: Kauf, Miete, Fläche 80 - 120 m², Zimmer 1 - 4, Wohnung, Haus, Salzburg (5020)

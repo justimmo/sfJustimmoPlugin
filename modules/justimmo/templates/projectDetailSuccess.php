@@ -1,53 +1,34 @@
 <?php /** @var $project Justimmo\Model\Project */ ?>
-
-<div>
-    <ul>
-        <li>
-            <?php echo link_to(__('Projekt Liste'), url_for("@justimmo_project_list"), array('class' => 'js-history-back')); ?>
-        </li>
-        <li>
-            <a class="scroll-to" href="#lage"><?php echo __('Lage'); ?></a>
-        </li>
-
+<div class="top-bar">
+    <p class="navigation">
+        <a href="<?php echo url_for("@justimmo_project_list"); ?>"><?php echo __('Projekt Liste'); ?></a> /
         <?php if ($project->countRealties() > 0): ?>
-            <li>
-                <a class="scroll-to" href="#realties"><?php echo __('Objekte'); ?></a>
-            </li>
+            <a href="#realties"><?php echo __('Objekte'); ?></a> /
         <?php endif; ?>
-    </ul>
+        <a href="#location"><?php echo __('Lage'); ?></a> /
+        <a href="#contact"><?php echo __('Kontakt'); ?></a>
+    </p>
 </div>
 
 
 <h1><?php echo $project->getTitle(); ?></h1>
 <p>
-    <?php echo $project->getPlace(); ?>
-
-    <?php // @todo: where/what is naehe ?>
-    <?php //isset($project->immobilien->immobilie->naehe) && $project->immobilien->immobilie->naehe != '' and print ", " . $project->immobilien->immobilie->naehe; ?>
+    <?php echo $project->getPlace(); ?>,
+    <?php echo $project->getZipCode(); ?>
 </p>
 
-<?php
-/*
-$i = 1;
-$gallery_images_count = count($project->bilder->bild);
-?>
-
-<div class="bg_object__gallery royalSlider rsDefaultInv fwImage <?php $gallery_images_count == 1 and print 'no-thumbs'; ?>">
-    <?php foreach ($project->bilder->bild as $bild): ?>
-        <a class="rsImg"
-           data-toggle="modal"
-           data-rsdelay="1000"
-           data-rsbigimg="<?php echo $bild->pfad; ?>"
-           href="<?php echo $bild->pfad; ?>">
-            <img class="rsTmb"
-                 src="<?php echo $bild->pfad; ?>"
-                 alt="<?php echo $project->titel . " - Photo " . $i++; ?>"
-                 height="72" width="96">
+<div class="gallery">
+    <?php
+    $i = 1;
+    /** @var \Justimmo\Model\Attachment $picture */
+    ?>
+    <?php foreach ($project->getPictures() as $picture): ?>
+        <a href="<?php echo $picture->getUrl('orig'); ?>">
+            <img alt="<?php echo $picture->getTitle() . " - Photo " . $i++; ?>"
+                 src="<?php echo api_pic_url_replace($picture->getUrl('orig'), 'small'); ?>"/>
         </a>
     <?php endforeach; ?>
 </div>
- */
-?>
 
 <?php if (strlen($project->getDescription()) > 0): ?>
     <h2><?php echo __('Projektbeschreibung'); ?></h2>
@@ -60,14 +41,10 @@ $gallery_images_count = count($project->bilder->bild);
 
     <?php include_partial('project_realties_table', array('realties' => $project->getRealties())); ?>
 <?php endif; ?>
-</div>
 
-<div class="aside">
-    <h2><?php echo __('Kontakt'); ?></h2>
-    <?php // include_component('immobilien', 'teamMember', array('team_member_id' => $project->kontaktperson->personennummer)); ?>
-    <?php include_partial('employee', array('employee'=>$project->getContact())); ?>
-
-
+<aside>
+    <h2 id="contact"><?php echo __('Kontakt'); ?></h2>
+    <?php include_partial('employee', array('employee' => $project->getContact())); ?>
 
     <?php /*
     <?php if (count($project->videos->children()) > 0): ?>
@@ -138,16 +115,15 @@ $gallery_images_count = count($project->bilder->bild);
     ?>
 
     <!--    --><?php //if ($project->strasse && $project->hausnummer && $project->plz && $project->ort): ?>
-    <?php if (false): ?>
-        <hr>
-
-        <h2 id="lage"><?php echo __('Lage'); ?></h2>
-        <p><?php echo $project->strasse; ?> <?php echo $project->hausnummer; ?>, <?php echo $project->plz; ?> <?php echo $project->ort; ?></p>
+    <?php if ($project->getStreet()): ?>
+        <h2 id="location"><?php echo __('Lage'); ?></h2>
+        <p><?php echo $project->getStreet(); ?> <?php echo $project->getHouseNumber(); ?>, <?php echo $project->getZipCode(); ?> <?php echo $project->getPlace(); ?></p>
 
         <div class="google-map-canvas">
-            <div id="map_canvas"
-                 data-title="<?php echo $project->titel; ?>"
-                 data-address="<?php echo $project->strasse; ?> <?php echo $project->hausnummer; ?>, <?php echo $project->plz; ?> <?php echo $project->ort; ?>"></div>
+            <div id="map" class="google-map"
+                 data-title="<?php echo $project->getTitle(); ?>"
+                 data-address="<?php echo $project->getStreet(); ?> <?php echo $project->getHouseNumber(); ?>, <?php echo $project->getZipCode(); ?> <?php echo $project->getPlace(); ?>">
+            </div>
         </div>
     <?php endif; ?>
 
@@ -164,3 +140,4 @@ $gallery_images_count = count($project->bilder->bild);
     <?php endif; ?>
 */
     ?>
+</aside>

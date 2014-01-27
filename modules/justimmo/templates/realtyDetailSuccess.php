@@ -1,13 +1,5 @@
 <?php /** @var $realty Justimmo\Model\Realty */ ?>
-
-<h1>Realty</h1>
-<p>
-    <?php echo $realty->getTitle() . ' ' . $realty->getPropertyNumber(); ?>
-</p>
-
-
 <article class="justimmo realty">
-
     <?php if (!isset($realty)): ?>
         <div class="justimmo realty-no-result">
             <h1><?php echo __('Fehler!'); ?></h1>
@@ -49,22 +41,15 @@
 
         <div class="information">
             <div class="description">
-                <div class="gallery royalSlider rsMinW fwImage">
+                <div class="gallery">
                     <?php
                     $i = 1;
                     /** @var \Justimmo\Model\Attachment $picture */
                     ?>
                     <?php foreach ($realty->getPictures() as $picture): ?>
-                        <a class="rsImg"
-                           data-rsdelay="1000"
-                           data-rsbigimg="<?php echo $picture->getUrl('big2'); ?>"
-                           href="<?php echo $picture->getUrl('big2'); ?>">
-                            <img
-                                alt="<?php echo $realty->getTitle() . " - Photo " . $i++; ?>"
-                                class="rsTmb"
-                                src="<?php echo $picture->getUrl('medium2'); ?>"
-                                width="96"
-                                height="72"/>
+                        <a href="<?php echo $picture->getUrl('big2'); ?>">
+                            <img alt="<?php echo $realty->getTitle() . " - Photo " . $i++; ?>"
+                                 src="<?php echo $picture->getUrl('small'); ?>"/>
                         </a>
                     <?php endforeach; ?>
                 </div>
@@ -110,6 +95,7 @@
                         </a>
                     <?php endforeach; ?>
                 <?php endif; */
+                /*
                 ?>
 
                 <?php if (count($realty->getAttachmentsByType('bilder360'))): ?>
@@ -124,12 +110,7 @@
                 <?php endif; ?>
 
                 <?php
-
-                echo "<pre>";
-                var_dump($realty->getPictures());
-                
-                echo "</pre>";
-                
+                */
                 /* //@todo: leave this out and show it in the gallery???
 
                      if ($grundrisse->count() > 0) : ?>
@@ -152,7 +133,8 @@
             <?php include_partial('realty_details', array('realty' => $realty)); ?>
         </div>
 
-        <?php // include_component('immobilien', 'anfrage', array('immobilie' => $realty, 'onr' => $onr, 'id' => $id)); ?>
+        <?php include_partial('realty_inquiry', array('form' => new RealtyInquiryForm(array('realty_id' => $realty->getId())))); ?>
+
         <?php include_partial('employee', array('employee' => $realty->getContact())); ?>
 
     <?php endif; ?>

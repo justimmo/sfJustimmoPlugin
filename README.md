@@ -49,7 +49,8 @@ class ProjectConfiguration extends sfProjectConfiguration
 }
 ```
 
-Enable the Api Helper in apps/frontend/config/settings.yml
+
+Make sure the I18N and Api helpers are enabled in apps/frontend/config/settings.yml
 
 ```
 all
@@ -75,11 +76,3 @@ Please check __services.xml__ for the full list of available services.
 
 
 // @todo: how to overwrite actions and templates after you use the plugin
-
-Make sure the I18N standard helper is enabled in project/application/config/settings.yml
-
-```
-all:
-  .settings:
-    standard_helpers:       [Partial, Cache, I18N]
-```

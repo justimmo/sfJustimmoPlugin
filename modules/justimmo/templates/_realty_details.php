@@ -1,3 +1,5 @@
+<?php /** @var \Justimmo\Model\Realty $realty */ ?>
+
 <div class="justimmo realty-details">
 <h3><?php echo __('Eckdaten'); ?></h3>
 
@@ -71,7 +73,7 @@
 
 <?php /** @var \Justimmo\Model\AdditionalCosts $cost */ ?>
 <?php foreach ($realty->getAdditionalCosts() as $index => $cost): ?>
-    <?php if ($cost->getGross() > 0): ?>
+    <?php if (false): ?>
         <tr>
             <td>
                 <?php echo $cost->getName(); ?>:

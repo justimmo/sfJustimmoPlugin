@@ -97,7 +97,7 @@
         <?php include_partial('pagination', array('pager' => $pager, 'route' => '@justimmo_realty_list')); ?>
 
         <aside>
-            <?php include_partial('filter_realty', array('form' => $filter_realty)); ?>
+            <?php include_partial('realty_filter', array('form' => $filter_realty)); ?>
         </aside>
     <?php else: ?>
         <div class="justimmo realty-no-results">
