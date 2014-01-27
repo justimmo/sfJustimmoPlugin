@@ -40,8 +40,6 @@ class baseJustimmoActions extends sfActions
         $this->forward404Unless($request->getParameter('id', null));
         $this->realty = $query->findPk($request->getParameter('id', null));
         $this->forward404Unless($this->realty);
-
-
     }
 
     public function executeRealtyExpose(sfWebRequest $request)
@@ -51,7 +49,7 @@ class baseJustimmoActions extends sfActions
         $id  = $request->getParameter('id');
 
         header('Content-type: application/pdf');
-        header('Content-Disposition: attachment; filename="expose-' . $id . '-' . time() . '.pdf"');
+//        header('Content-Disposition: attachment; filename="expose-' . $id . '-' . time() . '.pdf"');
 
         echo $api->callExpose($id);
         return sfView::NONE;
@@ -62,9 +60,23 @@ class baseJustimmoActions extends sfActions
         /** @var Justimmo\Api\JustimmoApi $api */
         $api = $this->container->get('justimmo.api');
 
-        $inquiry_params = array();
+        // @todo: use user session for the values? so we can fetch them in the detail view and see the fields with errors?
 
-        return $api->postRealtyInquiry($inquiry_params);
+        $form = new RealtyInquiryForm();
+        $form->bind($request->getParameter($form->getName()));
+
+        if ($form->isValid()) {
+            $api_params = array(
+                'objekt_id' => $form->getValue('realty_id'),
+                // @todo: fill in all params needed by postRealtyInquiry & API
+            );
+//            $inquiry_status = $api->postRealtyInquiry($api_params);
+            $this->getUser()->setFlash('success', 'Success!');
+        } else {
+            $this->getUser()->setFlash('error', 'Error');
+        }
+
+        $this->redirect($request->getReferer() . '#contact-form');
     }
 
     public function executeRealtyFilter(sfWebRequest $request)
