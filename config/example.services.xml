@@ -2,7 +2,6 @@
 <!-- Copy this file to your project's ./config folder and load it in the ProjectConfiguration when creating the DIC -->
 <!-- Update parameter values as required, e.g., username, password -->
 
-
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
@@ -13,7 +12,7 @@
         <parameter key="justimmo.api.class">Justimmo\Api\JustimmoApi</parameter>
         <parameter key="justimmo.logger.class">Monolog\Logger</parameter>
         <parameter key="justimmo.logger.webdebughandler.class">JustimmoWebDebugHandler</parameter>
-        <parameter key="justimmo.cache.class">Justimmo\Cache\NullCache</parameter>
+        <parameter key="justimmo.cache.class">Justimmo\Cache\MemcacheCache</parameter>
 
         <parameter key="justimmo.realty.mapper">Justimmo\Model\Mapper\V1\RealtyMapper</parameter>
         <parameter key="justimmo.realty.wrapper">Justimmo\Model\Wrapper\V1\RealtyWrapper</parameter>
@@ -29,7 +28,7 @@
     </parameters>
 
     <services>
-        <service id="justimmo.webdebug.handler" class="%justimmo.logger.webdebughandler.class%"></service>
+        <service id="justimmo.webdebug.handler" class="%justimmo.logger.webdebughandler.class%"/>
         <service id="justimmo.logger" class="%justimmo.logger.class%">
             <argument type="string">justimmo</argument>
             <call method="pushHandler">
@@ -37,48 +36,54 @@
             </call>
         </service>
 
-        <service id="justimmo.cache" class="%justimmo.cache.class%"></service>
+        <service id="justimmo.memcache" class="Memcache">
+            <call method="addServer">
+                <argument type="string">localhost</argument>
+            </call>
+        </service>
+        <service id="justimmo.cache" class="%justimmo.cache.class%">
+            <argument type="service" id="justimmo.memcache"/>
+        </service>
 
-        <service id="justimmo.realty.mapper" class="%justimmo.realty.mapper%"></service>
+        <service id="justimmo.realty.mapper" class="%justimmo.realty.mapper%"/>
         <service id="justimmo.realty.wrapper" class="%justimmo.realty.wrapper%">
-            <argument type="service" id="justimmo.realty.mapper"></argument>
+            <argument type="service" id="justimmo.realty.mapper"/>
         </service>
 
-        <service id="justimmo.project.mapper" class="%justimmo.project.mapper%"></service>
+        <service id="justimmo.project.mapper" class="%justimmo.project.mapper%"/>
         <service id="justimmo.project.wrapper" class="%justimmo.project.wrapper%">
-            <argument type="service" id="justimmo.project.mapper"></argument>
+            <argument type="service" id="justimmo.project.mapper"/>
         </service>
 
-        <service id="justimmo.employee.mapper" class="%justimmo.employee.mapper%"></service>
+        <service id="justimmo.employee.mapper" class="%justimmo.employee.mapper%"/>
         <service id="justimmo.employee.wrapper" class="%justimmo.employee.wrapper%">
-            <argument type="service" id="justimmo.employee.mapper"></argument>
+            <argument type="service" id="justimmo.employee.mapper"/>
         </service>
 
         <service id="justimmo.api" class="%justimmo.api.class%">
             <argument>%justimmo.username%</argument>
             <argument>%justimmo.password%</argument>
-            <argument type="service" id="justimmo.logger"></argument>
-            <argument type="service" id="justimmo.cache"></argument>
+            <argument type="service" id="justimmo.logger"/>
+            <argument type="service" id="justimmo.cache"/>
         </service>
 
         <service id="justimmo.query.realty" class="%justimmo.query.realty.class%">
-            <argument type="service" id="justimmo.api"></argument>
-            <argument type="service" id="justimmo.realty.wrapper"></argument>
-            <argument type="service" id="justimmo.realty.mapper"></argument>
+            <argument type="service" id="justimmo.api"/>
+            <argument type="service" id="justimmo.realty.wrapper"/>
+            <argument type="service" id="justimmo.realty.mapper"/>
         </service>
 
         <service id="justimmo.query.project" class="%justimmo.query.project.class%">
-            <argument type="service" id="justimmo.api"></argument>
-            <argument type="service" id="justimmo.project.wrapper"></argument>
-            <argument type="service" id="justimmo.project.mapper"></argument>
+            <argument type="service" id="justimmo.api"/>
+            <argument type="service" id="justimmo.project.wrapper"/>
+            <argument type="service" id="justimmo.project.mapper"/>
         </service>
 
         <service id="justimmo.query.employee" class="%justimmo.query.employee.class%">
-            <argument type="service" id="justimmo.api"></argument>
-            <argument type="service" id="justimmo.employee.wrapper"></argument>
-            <argument type="service" id="justimmo.employee.mapper"></argument>
+            <argument type="service" id="justimmo.api"/>
+            <argument type="service" id="justimmo.employee.wrapper"/>
+            <argument type="service" id="justimmo.employee.mapper"/>
         </service>
     </services>
 
 </container>
-
