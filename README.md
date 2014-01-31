@@ -6,10 +6,7 @@ __Composer dependencies:__
 
 ```
 "require": {
-    "justimmo/php-sdk":              "1.0.*",
-    "symfony/dependency-injection":  "2.4.*",
-    "symfony/config":                "2.4.*",
-    "monolog/monolog":               "1.7.*"
+    "justimmo/sf-justimmo-plugin":   "dev-master"
 }
 ```
 

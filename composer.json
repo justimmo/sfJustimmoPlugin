@@ -1,0 +1,13 @@
+{
+    "name": "justimmo/sf-justimmo-plugin",
+    "description": "Symfony 1 Plugin for Justimmo Api Integration",
+    "type": "symfony1-plugin",
+    "license": "MIT",
+    "require": {
+        "composer/installers":           "~1.0",
+        "justimmo/php-sdk":              "1.0.*",
+        "symfony/dependency-injection":  "2.4.*",
+        "symfony/config":                "2.4.*",
+        "monolog/monolog":               "1.7.*"
+    }
+}
