@@ -1,8 +1,8 @@
 <?php
 
-class baseRealtyFilter extends sfFormFilter
+class baseRealtyFilter extends BaseForm
 {
-    public function configure()
+    public function setup()
     {
         $this->setWidget('objektnummer_von', new sfWidgetFormInput());
         $this->setValidator('objektnummer_von', new sfValidatorString(array('required' => false)));
@@ -58,12 +58,4 @@ class baseRealtyFilter extends sfFormFilter
 
         $this->getWidgetSchema()->setNameFormat("filter_realty[%s]");
     }
-
-    public function buildQuery(\Justimmo\Model\RealtyQuery &$query, $params = array())
-    {
-        // fetch data from user session and add it to the query
-
-        return $query;
-    }
-
 }

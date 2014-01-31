@@ -16,7 +16,7 @@
 
         <parameter key="justimmo.realty.mapper">Justimmo\Model\Mapper\V1\RealtyMapper</parameter>
         <parameter key="justimmo.realty.wrapper">Justimmo\Model\Wrapper\V1\RealtyWrapper</parameter>
-        <parameter key="justimmo.query.realty.class">Justimmo\Model\RealtyQuery</parameter>
+        <parameter key="justimmo.query.realty.class">\JustimmoRealtyQuery</parameter>
 
         <parameter key="justimmo.project.mapper">Justimmo\Model\Mapper\V1\ProjectMapper</parameter>
         <parameter key="justimmo.project.wrapper">Justimmo\Model\Wrapper\V1\ProjectWrapper</parameter>

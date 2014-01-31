@@ -23,11 +23,12 @@ class baseJustimmoActions extends sfActions
      */
     public function executeRealtyList(sfWebRequest $request)
     {
-        /** @var Justimmo\Model\RealtyQuery $query */
+        /** @var JustimmoRealtyQuery $query */
         $query = $this->container->get('justimmo.query.realty');
 
-        $this->filter_realty = new baseRealtyFilter();
-        $this->filter_realty->buildQuery($query, $this->getUser()->getAttribute($this->filter_realty->getName(), null, 'justimmo'));
+        $this->filter_realty = new baseRealtyFilter($this->getUser()->getAttribute($this->filter_realty->getName(), null, 'justimmo'));
+
+        $query->applyFilter($this->getUser()->getAttribute($this->filter_realty->getName(), array(), 'justimmo'));
 
         $this->pager = $query->paginate($request->getParameter('page', 1), $this->_perPage);
     }
@@ -38,7 +39,12 @@ class baseJustimmoActions extends sfActions
         $query = $this->container->get('justimmo.query.realty');
 
         $this->forward404Unless($request->getParameter('id', null));
-        $this->realty = $query->findPk($request->getParameter('id', null));
+        try {
+            $this->realty = $query->findPk($request->getParameter('id', null));
+        } catch (\Justimmo\Exception\NotFoundException $e) {
+            $this->forward404();
+        }
+
         $this->forward404Unless($this->realty);
     }
 
@@ -57,26 +63,7 @@ class baseJustimmoActions extends sfActions
 
     public function executeRealtyInquiry(sfWebRequest $request)
     {
-        /** @var Justimmo\Api\JustimmoApi $api */
-        $api = $this->container->get('justimmo.api');
-
-        // @todo: use user session for the values? so we can fetch them in the detail view and see the fields with errors?
-
-        $form = new RealtyInquiryForm();
-        $form->bind($request->getParameter($form->getName()));
-
-        if ($form->isValid()) {
-            $api_params = array(
-                'objekt_id' => $form->getValue('realty_id'),
-                // @todo: fill in all params needed by postRealtyInquiry & API
-            );
-//            $inquiry_status = $api->postRealtyInquiry($api_params);
-            $this->getUser()->setFlash('success', 'Success!');
-        } else {
-            $this->getUser()->setFlash('error', 'Error');
-        }
-
-        $this->redirect($request->getReferer() . '#contact-form');
+        return $this->renderComponent('justimmo/realtyInquiry', array('id' => $request->getParameter('id')));
     }
 
     public function executeRealtyFilter(sfWebRequest $request)
