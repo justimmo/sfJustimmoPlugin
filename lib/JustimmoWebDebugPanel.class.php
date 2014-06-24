@@ -36,7 +36,7 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
     public function addQuery($v)
     {
         $query = $this->processQuery($v);
-        if ($query) {
+        if ($query !== false) {
             $this->queries[] = $query;
         }
     }
@@ -129,41 +129,35 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
         $title = "";
         $time  = "";
         $text  = "";
-
-        // let's see what the message is...
         $msg     = $query['message'];
         $context = $query['context'];
 
-        if (strpos($msg, 'begin api call') !== false) {
-            ++$this->all_api_calls;
-            $url   = mb_substr($msg, 17);
-            $title = '<a target="_blank" href="' . $url . '">' . $url . '</a>';
-            $time  = "";
-            $text  = false;
-        }
-        if (strpos($msg, 'cache key is') !== false) {
-            $title = "Cache Key: ";
-            if (strlen($msg) < 15) {
-                $title .= "EMPTY";
-            } else {
-                $title .= mb_substr($msg, 13);
-            }
-            $time = "";
-            $text = false;
-        }
-        if (strpos($msg, 'cache found') !== false) {
-            $title = false;
-            ++$this->cached_api_calls;
-        }
+        /**
+         * We only analyze the logged entries that have 'call end'
+         * Here we can check if the response is cached or not,
+         * get the response time, response text, etc.
+         */
         if (strpos($msg, 'call end') !== false) {
+            ++$this->all_api_calls;
+
             if ($context['cache']) {
-                $title .= '<span style="background-color: #b1e7a4;">';
+                ++$this->cached_api_calls;
+                $title .= '<span style="background-color: #B1E7A4;">';
             } else {
-                $title .= '<span style="background-color: #ff7777;">';
+                $title .= '<span style="background-color: #FFBABA;">';
             }
-            $title .= "API Response</span>";
+            // We use parse_url() because we don't want to show the full URL, just the request path/querystring
+            $url = parse_url($context['url']);
+            $title .= $url['path'];
+            if (isset($url['query'])) {
+                $title .= '?' . $url['query'];
+            }
+            $title .= '</span>';
+
             $time = "Time: " . number_format($context['time'], 5);
-            $text = $this->xml_highlight($context['response']);
+
+            $text = '<p>URL: <a target="_blank" href="' . $context['url'] . '">' . $context['url'] . '</a></p>';
+            $text .= $this->xml_highlight($context['response']);
         }
 
         if ($title != false) {
