@@ -75,6 +75,7 @@ class baseJustimmoActions extends sfActions
     {
         if ($request->hasParameter('reset')) {
             $this->getUser()->setAttribute($this->filter->getName(), null, 'justimmo');
+            $this->getUser()->setAttribute('filter_order', null, 'justimmo');
         }
 
         if ($request->getMethod() == "POST") {
