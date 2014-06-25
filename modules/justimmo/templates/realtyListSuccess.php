@@ -1,11 +1,11 @@
 <?php /** @var Justimmo\Model\Realty $realty */ ?>
-<?php /** @var baseRealtyFilter $filter_realty */ ?>
+<?php /** @var baseRealtyFilter $realty_filter */ ?>
 
 <section class="justimmo realty-list">
 
     <?php if ($pager->count()): ?>
 
-        <h1><?php echo __('Realty List'); ?></h1>
+        <h1><?php echo __('Realty List'); ?> (<?php echo $pager->getNbResults(); ?>)</h1>
 
         <?php
         $order = $sf_params->get('order', null);
@@ -16,18 +16,18 @@
         <section class="justimmo realty-sort">
             <h1><?php echo __('Sort by'); ?>:</h1>
 
-            <a href="<?php echo url_for('@justimmo_realty_list'); ?>?order=<?php print $order == 'postcode-asc' ? 'postcode-desc' : 'postcode-asc'; ?>"
-               class="<?php $order == 'postcode-asc' and print 'ascending'; ?>">
+            <a href="<?php echo url_for('@justimmo_realty_list'); ?>/page/<?php echo $pager->getPage(); ?>?order=<?php print $order == 'ZipCode-asc' ? 'ZipCode-desc' : 'ZipCode-asc'; ?>"
+               class="<?php $order == 'ZipCode-asc' and print 'ascending'; $order == 'ZipCode-desc' and print 'descending'; ?>">
                 <?php echo __('PLZ'); ?>
             </a>
 
-            <a href="<?php echo url_for('@justimmo_realty_list'); ?>?order=<?php print $order == 'price-asc' ? 'price-desc' : 'price-asc'; ?>"
-               class="<?php $order == 'price-asc' and print 'ascending'; ?>">
+            <a href="<?php echo url_for('@justimmo_realty_list'); ?>/page/<?php echo $pager->getPage(); ?>?order=<?php print $order == 'Price-asc' ? 'Price-desc' : 'Price-asc'; ?>"
+               class="<?php $order == 'Price-asc' and print 'ascending'; $order == 'Price-desc' and print 'descending'; ?>">
                 <?php echo __('Preis'); ?>
             </a>
 
-            <a href="<?php echo url_for('@justimmo_realty_list'); ?>?order=<?php print $order == 'area-asc' ? 'area-desc' : 'area-asc'; ?>"
-               class="<?php $order == 'area-asc' and print 'ascending'; ?>">
+            <a href="<?php echo url_for('@justimmo_realty_list'); ?>/page/<?php echo $pager->getPage(); ?>?order=<?php print $order == 'LivingArea-asc' ? 'LivingArea-desc' : 'LivingArea-asc'; ?>"
+               class="<?php $order == 'LivingArea-asc' and print 'ascending'; $order == 'LivingArea-desc' and print 'descending'; ?>">
                 <?php echo __('Fläche'); ?>
             </a>
         </section>
@@ -40,6 +40,10 @@
                     <img alt="<?php echo $realty->getTitle(); ?>"
                          title="<?php echo $realty->getTitle(); ?>"
                          src="<?php echo realty_picture_url($realty->getPictures(), 0, 'orig'); ?>"/>
+
+                    <span><small>
+                        Sorting properties: <?php echo $realty->getZipCode(); ?> - <?php echo $realty->getPurchasePrice(); ?> - <?php echo $realty->getLivingArea(); ?>
+                    </small></span>
                 </div>
 
                 <div class="description">
@@ -93,11 +97,10 @@
         <?php endforeach; ?>
 
         <?php // @todo: send sorting information? or is it stored in the session? ?>
-
         <?php include_partial('pagination', array('pager' => $pager, 'route' => '@justimmo_realty_list')); ?>
 
         <aside>
-            <?php include_partial('realty_filter', array('form' => $filter_realty)); ?>
+            <?php include_partial('realty_filter', array('form' => $realty_filter)); ?>
         </aside>
     <?php else: ?>
         <div class="justimmo realty-no-results">

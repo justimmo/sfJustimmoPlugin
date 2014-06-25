@@ -78,23 +78,28 @@ function realty_picture_url($pictures, $index = 0, $size = 'orig')
 
 
 /**
- * Format "mailto:" with full name and email address (look at the employee partial)
+ * Formats "mailto:" with full name and email address.
+ * <br>
+ * To be used with &lt;a&gt; tags, inside the href attribute.
+ *
  * @param string $name
  * @param string $email
  * @return string
  */
 function format_mailto($name, $email)
 {
-    if (!empty($name)) {
-        return
-            "mailto:" .
-            str_replace(" ", "%20", $name) .
-            "%20" .
-            "%3c" . $email . "%3e";
-    }
-    if (!empty($email)) {
-        return
-            "mailto:" . $email;
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (!empty($name)) {
+            return
+                "mailto:" .
+                str_replace(" ", "%20", $name) .
+                "%20" .
+                "%3c" . $email . "%3e";
+        }
+        if (!empty($email)) {
+            return
+                "mailto:" . $email;
+        }
     }
 
     return '';

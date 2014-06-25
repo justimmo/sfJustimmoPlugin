@@ -150,7 +150,7 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
             $url = parse_url($context['url']);
             $title .= $url['path'];
             if (isset($url['query'])) {
-                $title .= '?' . $url['query'];
+                $title .= '?...';
             }
             $title .= '</span>';
 

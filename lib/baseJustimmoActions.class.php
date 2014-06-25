@@ -6,6 +6,8 @@
  */
 class baseJustimmoActions extends sfActions
 {
+    /** @var baseRealtyFilter $filter  */
+    private $filter = null;
     private $_perPage = 4;
 
     public function preExecute()
@@ -14,28 +16,31 @@ class baseJustimmoActions extends sfActions
 
         /** @var Symfony\Component\DependencyInjection\ContainerBuilder $this->container */
         $this->container = $this->getContext()->getConfiguration()->getContainer();
+
+        $this->filter = new baseRealtyFilter();
     }
 
-    /**
-     * @todo: apply filters?
-     *
-     * @param sfWebRequest $request
-     */
     public function executeRealtyList(sfWebRequest $request)
     {
+        $this->filter->setDefaults($this->getUser()->getAttribute($this->filter->getName(), null, 'justimmo'));
+
+        if ($request->getParameter('order')) {
+            $this->getUser()->setAttribute('filter_order', $request->getParameter('order'), 'justimmo');
+        }
+
         /** @var JustimmoRealtyQuery $query */
         $query = $this->container->get('justimmo.query.realty');
+        $query->applyFilter($this->getUser()->getAttribute($this->filter->getName(), array(), 'justimmo'));
+        $query->applyOrder($this->getUser()->getAttribute('filter_order', null, 'justimmo'));
 
-        $this->filter_realty = new baseRealtyFilter($this->getUser()->getAttribute($this->filter_realty->getName(), null, 'justimmo'));
-
-        $query->applyFilter($this->getUser()->getAttribute($this->filter_realty->getName(), array(), 'justimmo'));
+        $this->realty_filter = $this->filter;
 
         $this->pager = $query->paginate($request->getParameter('page', 1), $this->_perPage);
     }
 
     public function executeRealtyDetail(sfWebRequest $request)
     {
-        /** @var Justimmo\Model\RealtyQuery $query */
+        /** @var JustimmoRealtyQuery $query */
         $query = $this->container->get('justimmo.query.realty');
 
         $this->forward404Unless($request->getParameter('id', null));
@@ -69,22 +74,19 @@ class baseJustimmoActions extends sfActions
     public function executeRealtyFilter(sfWebRequest $request)
     {
         if ($request->hasParameter('reset')) {
-            // @todo: reset filters
+            $this->getUser()->setAttribute($this->filter->getName(), null, 'justimmo');
         }
-        if ($request->getMethod() == "POST") {
-            // validate
-            $filter_realty = new baseRealtyFilter();
-            $filter_realty->bind($request->getParameter($filter_realty->getName()));
 
-            if ($filter_realty->isValid()) {
-                // save to session
-                $this->getUser()->setAttribute($filter_realty->getName(), $filter_realty->getValues(), 'justimmo');
+        if ($request->getMethod() == "POST") {
+            $this->filter->bind($request->getParameter($this->filter->getName()));
+
+            if ($this->filter->isValid()) {
+                $this->getUser()->setAttribute($this->filter->getName(), $this->filter->getValues(), 'justimmo');
                 // use Justimmo.Logger to log any filters that are set
             }
             // use Justimmo.Logger to log any errors
         }
 
-        // redirect to list
         // @todo: should we add GET params to be able to bookmark/send links with search filters in URL?
         $this->redirect("@justimmo_realty_list");
     }

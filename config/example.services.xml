@@ -20,11 +20,11 @@
 
         <parameter key="justimmo.project.mapper">Justimmo\Model\Mapper\V1\ProjectMapper</parameter>
         <parameter key="justimmo.project.wrapper">Justimmo\Model\Wrapper\V1\ProjectWrapper</parameter>
-        <parameter key="justimmo.query.project.class">Justimmo\Model\ProjectQuery</parameter>
+        <parameter key="justimmo.query.project.class">\JustimmoProjectQuery</parameter>
 
         <parameter key="justimmo.employee.mapper">Justimmo\Model\Mapper\V1\EmployeeMapper</parameter>
         <parameter key="justimmo.employee.wrapper">Justimmo\Model\Wrapper\V1\EmployeeWrapper</parameter>
-        <parameter key="justimmo.query.employee.class">Justimmo\Model\EmployeeQuery</parameter>
+        <parameter key="justimmo.query.employee.class">\JustimmoEmployeeQuery</parameter>
     </parameters>
 
     <services>

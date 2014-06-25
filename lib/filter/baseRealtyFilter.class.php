@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * The widgets used in the filter form must match the filter mapping of the RealtyMapper class.
+ *
+ * Class baseRealtyFilter
+ */
 class baseRealtyFilter extends BaseForm
 {
     public function setup()

@@ -57,7 +57,7 @@ class JustimmoPluginRouting
         );
         $r->prependRoute(
             'justimmo_realty_filter_reset',
-            new sfRoute('/:sf_culture/realty/filter/reset/yes/*',
+            new sfRoute('/:sf_culture/realty/filter?reset',
                 array(
                     'module' => 'justimmo',
                     'action' => 'realtyFilter'
