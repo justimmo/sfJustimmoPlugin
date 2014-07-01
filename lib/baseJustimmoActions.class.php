@@ -6,7 +6,7 @@
  */
 class baseJustimmoActions extends sfActions
 {
-    /** @var baseRealtyFilter $filter  */
+    /** @var baseRealtyFilter $filter */
     private $filter = null;
     private $_perPage = 4;
 
@@ -57,7 +57,8 @@ class baseJustimmoActions extends sfActions
     {
         /** @var Justimmo\Api\JustimmoApi $api */
         $api = $this->container->get('justimmo.api');
-        $id  = $request->getParameter('id');
+        $id  = $request->getParameter('id', null);
+        $this->forward404Unless($id);
 
         header('Content-type: application/pdf');
 //        header('Content-Disposition: attachment; filename="expose-' . $id . '-' . time() . '.pdf"');
@@ -84,8 +85,10 @@ class baseJustimmoActions extends sfActions
             if ($this->filter->isValid()) {
                 $this->getUser()->setAttribute($this->filter->getName(), $this->filter->getValues(), 'justimmo');
                 // use Justimmo.Logger to log any filters that are set
+            } else {
+                // @todo: use Justimmo.Logger to log any errors
+                die('errors - please check your code');
             }
-            // use Justimmo.Logger to log any errors
         }
 
         // @todo: should we add GET params to be able to bookmark/send links with search filters in URL?

@@ -3,8 +3,19 @@ use Justimmo\Model\RealtyQuery;
 
 class JustimmoRealtyQuery extends RealtyQuery
 {
+    /**
+     * Force showing ONLY realties from one particular category.
+     * The category MUST exist in Justimmo
+     *
+     * @var string
+     */
+    protected $enabled_category = '';
+
     public function applyFilter($params = array())
     {
+        if (!empty($this->enabled_category)) {
+            $this->filterByTag($this->enabled_category);
+        }
         foreach ($params as $key => $value) {
             $this->filter($key, $value);
         }

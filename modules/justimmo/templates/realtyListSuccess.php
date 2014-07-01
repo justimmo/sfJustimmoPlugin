@@ -28,7 +28,7 @@
 
             <a href="<?php echo url_for('@justimmo_realty_list'); ?>/page/<?php echo $pager->getPage(); ?>?order=<?php print $order == 'LivingArea-asc' ? 'LivingArea-desc' : 'LivingArea-asc'; ?>"
                class="<?php $order == 'LivingArea-asc' and print 'ascending'; $order == 'LivingArea-desc' and print 'descending'; ?>">
-                <?php echo __('Fläche'); ?>
+                <?php echo __('Wohnfläche'); ?>
             </a>
         </section>
 
@@ -99,9 +99,6 @@
         <?php // @todo: send sorting information? or is it stored in the session? ?>
         <?php include_partial('pagination', array('pager' => $pager, 'route' => '@justimmo_realty_list')); ?>
 
-        <aside>
-            <?php include_partial('realty_filter', array('form' => $realty_filter)); ?>
-        </aside>
     <?php else: ?>
         <div class="justimmo realty-no-results">
             <h1><?php echo __('Keine Ergebnisse'); ?></h1>
@@ -122,4 +119,8 @@
             </p>
         </div>
     <?php endif; ?>
+
+    <aside>
+        <?php include_partial('realty_filter', array('form' => $realty_filter)); ?>
+    </aside>
 </section>

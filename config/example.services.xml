@@ -25,6 +25,10 @@
         <parameter key="justimmo.employee.mapper">Justimmo\Model\Mapper\V1\EmployeeMapper</parameter>
         <parameter key="justimmo.employee.wrapper">Justimmo\Model\Wrapper\V1\EmployeeWrapper</parameter>
         <parameter key="justimmo.query.employee.class">\JustimmoEmployeeQuery</parameter>
+
+        <parameter key="justimmo.basicdata.mapper">Justimmo\Model\Mapper\V1\BasicDataMapper</parameter>
+        <parameter key="justimmo.basicdata.wrapper">Justimmo\Model\Wrapper\V1\BasicDataWrapper</parameter>
+        <parameter key="justimmo.query.basicdata.class">Justimmo\Model\Query\BasicDataQuery</parameter>
     </parameters>
 
     <services>
@@ -60,6 +64,11 @@
             <argument type="service" id="justimmo.employee.mapper"/>
         </service>
 
+        <service id="justimmo.basicdata.mapper" class="%justimmo.basicdata.mapper%"/>
+        <service id="justimmo.basicdata.wrapper" class="%justimmo.basicdata.wrapper%">
+            <argument type="service" id="justimmo.basicdata.mapper"/>
+        </service>
+
         <service id="justimmo.api" class="%justimmo.api.class%">
             <argument>%justimmo.username%</argument>
             <argument>%justimmo.password%</argument>
@@ -83,6 +92,12 @@
             <argument type="service" id="justimmo.api"/>
             <argument type="service" id="justimmo.employee.wrapper"/>
             <argument type="service" id="justimmo.employee.mapper"/>
+        </service>
+
+        <service id="justimmo.query.basicdata" class="%justimmo.query.basicdata.class%">
+            <argument type="service" id="justimmo.api"/>
+            <argument type="service" id="justimmo.basicdata.wrapper"/>
+            <argument type="service" id="justimmo.basicdata.mapper"/>
         </service>
     </services>
 
