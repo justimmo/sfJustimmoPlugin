@@ -9,6 +9,7 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
      * @var array
      */
     private $queries = array();
+    private $started_api_calls = 0;
     private $all_api_calls = 0;
     private $cached_api_calls = 0;
 
@@ -92,30 +93,31 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
 
     public function xml_highlight($s)
     {
-        $doc               = new DOMDocument('1.0');
-        $doc->formatOutput = true;
+        if (mb_strlen($s) > 0) {
+            $doc               = new DOMDocument('1.0');
+            $doc->formatOutput = true;
 
-        // disable errors displayed on screen
-        // libxml_use_internal_errors(true);
+            // disable errors displayed on screen
+            // libxml_use_internal_errors(true);
 
-        $doc->loadXML($s);
-        $s = $doc->saveXML();
+            $doc->loadXML($s);
+            $s = $doc->saveXML();
 
-        $s = htmlspecialchars($s);
-        $s = preg_replace("#&lt;([/]*?)(.*)([\s]*?)&gt;#sU",
-            "<font color=\"#0000FF\">&lt;\\1\\2\\3&gt;</font>", $s);
-        $s = preg_replace("#&lt;([\?])(.*)([\?])&gt;#sU",
-            "<font color=\"#800000\">&lt;\\1\\2\\3&gt;</font>", $s);
-        $s = preg_replace("#&lt;([^\s\?/=])(.*)([\[\s/]|&gt;)#iU",
-            "&lt;<font color=\"#808000\">\\1\\2</font>\\3", $s);
-        $s = preg_replace("#&lt;([/])([^\s]*?)([\s\]]*?)&gt;#iU",
-            "&lt;\\1<font color=\"#808000\">\\2</font>\\3&gt;", $s);
-        $s = preg_replace("#([^\s]*?)\=(&quot;|')(.*)(&quot;|')#isU",
-            "<font color=\"#800080\">\\1</font>=<font color=\"#FF00FF\">\\2\\3\\4</font>", $s);
-        $s = preg_replace("#&lt;(.*)(\[)(.*)(\])&gt;#isU",
-            "&lt;\\1<font color=\"#800080\">\\2\\3\\4</font>&gt;", $s);
-        $s = str_replace("><", "><br /><", $s);
-
+            $s = htmlspecialchars($s);
+            $s = preg_replace("#&lt;([/]*?)(.*)([\s]*?)&gt;#sU",
+                "<font color=\"#0000FF\">&lt;\\1\\2\\3&gt;</font>", $s);
+            $s = preg_replace("#&lt;([\?])(.*)([\?])&gt;#sU",
+                "<font color=\"#800000\">&lt;\\1\\2\\3&gt;</font>", $s);
+            $s = preg_replace("#&lt;([^\s\?/=])(.*)([\[\s/]|&gt;)#iU",
+                "&lt;<font color=\"#808000\">\\1\\2</font>\\3", $s);
+            $s = preg_replace("#&lt;([/])([^\s]*?)([\s\]]*?)&gt;#iU",
+                "&lt;\\1<font color=\"#808000\">\\2</font>\\3&gt;", $s);
+            $s = preg_replace("#([^\s]*?)\=(&quot;|')(.*)(&quot;|')#isU",
+                "<font color=\"#800080\">\\1</font>=<font color=\"#FF00FF\">\\2\\3\\4</font>", $s);
+            $s = preg_replace("#&lt;(.*)(\[)(.*)(\])&gt;#isU",
+                "&lt;\\1<font color=\"#800080\">\\2\\3\\4</font>&gt;", $s);
+            $s = str_replace("><", "><br /><", $s);
+        }
         return $s;
     }
 
@@ -126,20 +128,31 @@ class JustimmoWebDebugPanel extends sfWebDebugPanel
      */
     private function processQuery($query)
     {
-        $title = "";
-        $time  = "";
-        $text  = "";
+        $title   = "";
+        $time    = "";
+        $text    = "";
         $msg     = $query['message'];
         $context = $query['context'];
 
         /**
-         * We only analyze the logged entries that have 'call end'
+         * Increase the all_api_calls counter everytime an Api call is started.
+         * Show the url so we know exactly what's happening.
+         */
+        if (strpos($msg, 'call start') !== false) {
+            ++$this->started_api_calls;
+            ++$this->all_api_calls;
+
+            $title = "API call #{$this->started_api_calls} started";
+            $time  = $context['url'];
+            $text  = print_r($query, 1);
+        }
+
+        /**
+         * We analyze the logged entries that have 'call end'
          * Here we can check if the response is cached or not,
          * get the response time, response text, etc.
          */
         if (strpos($msg, 'call end') !== false) {
-            ++$this->all_api_calls;
-
             if ($context['cache']) {
                 ++$this->cached_api_calls;
                 $title .= '<span style="background-color: #B1E7A4;">';
