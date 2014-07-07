@@ -5,7 +5,7 @@ class JustimmoRealtyQuery extends RealtyQuery
 {
     /**
      * Force showing ONLY realties from one particular category.
-     * The category MUST exist in Justimmo
+     * The category MUST exist in Justimmo.
      *
      * @var string
      */
@@ -38,5 +38,26 @@ class JustimmoRealtyQuery extends RealtyQuery
         } else {
             return;
         }
+    }
+
+    /**
+     * Fetch all realty Ids from Justimmo and match that against current Realty ID.
+     * Calculate page based on $perPage.
+     *
+     * When a Realty is being displayed, we can navigate to the next or previous
+     * in line, or go back to the listing, to the correct page.
+     *
+     * @param \Justimmo\Model\Realty $realty
+     * @param int $perPage
+     * @return array Array with 3 keys: next, prev, page
+     */
+    public function getNeighbours(Justimmo\Model\Realty $realty, $perPage)
+    {
+        // @todo: fetch Ids and search current realty ID to return neighbours (method not yet implemented in php-sdk)
+        return array(
+            'next' => false,
+            'prev' => false,
+            'page' => false,
+        );
     }
 }

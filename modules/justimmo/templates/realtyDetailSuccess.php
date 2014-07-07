@@ -23,9 +23,15 @@
     <?php else: ?>
         <div class="top-bar">
             <p class="navigation">
-                <a href="<?php echo url_for("@justimmo_realty_detail?id=" . $realty->getId()); ?>"><?php echo __('Vorheriges Objekt'); ?></a> /
-                <a href="<?php echo url_for('@justimmo_realty_list'); ?>"><?php echo __('zurück zur Übersicht'); ?></a> /
-                <a href="<?php echo url_for("@justimmo_realty_detail?id=" . $realty->getId()); ?>"><?php echo __('Nächstes Objekt'); ?></a> /
+                <?php if ($prevId): ?>
+                    <a href="<?php echo url_for("@justimmo_realty_detail?id=" . $prevId); ?>"><?php echo __('Vorheriges Objekt'); ?></a> /
+                <?php endif; ?>
+                <?php if ($page): ?>
+                    <a href="<?php echo url_for('@justimmo_realty_list'); ?>/page/<?php echo $page; ?>#<?php echo $realty->getId(); ?>"><?php echo __('zurück zur Übersicht'); ?></a> /
+                <?php endif; ?>
+                <?php if ($nextId): ?>
+                    <a href="<?php echo url_for("@justimmo_realty_detail?id=" . $nextId); ?>"><?php echo __('Nächstes Objekt'); ?></a> /
+                <?php endif; ?>
                 <a class="object-expose" href="<?php echo url_for('@justimmo_realty_expose?id=' . $realty->getId()); ?>">Expos&eacute;</a>
             </p>
         </div>
@@ -133,7 +139,7 @@
             <?php include_partial('realty_details', array('realty' => $realty)); ?>
         </div>
 
-        <?php include_partial('realty_inquiry', array('form' => new RealtyInquiryForm(array('realty_id' => $realty->getId())))); ?>
+        <?php include_partial('realty_inquiry', array('form' => $form, 'realty_id' => $realty->getId())); ?>
 
         <?php include_partial('employee', array('employee' => $realty->getContact())); ?>
 

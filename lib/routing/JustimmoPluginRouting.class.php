@@ -65,16 +65,6 @@ class JustimmoPluginRouting
             )
         );
 
-        $r->prependRoute(
-            'justimmo_realty_inquiry',
-            new sfRoute('/:sf_culture/realty/inquiry/*',
-                array(
-                    'module' => 'justimmo',
-                    'action' => 'realtyInquiry'
-                )
-            )
-        );
-
         // Projects
         $r->prependRoute(
             'justimmo_project_list',

@@ -122,9 +122,6 @@ class baseRealtyFilter extends BaseForm
         $this->setValidator('terrasse', new sfValidatorBoolean(array('required' => false)));
         $this->setValidator('loggia', new sfValidatorBoolean(array('required' => false)));
 
-        // Custom immo list based on a tag
-        //$filter['tag_name'] = 'tag-name';
-
         $this->getWidgetSchema()->setNameFormat("filter_realty[%s]");
 
         $this->widgetSchema->setLabels(array(
@@ -173,7 +170,7 @@ class baseRealtyFilter extends BaseForm
             foreach ($federal_states as $federal_state_id => $federal_state) {
                 if ($country_id == $federal_state['countryId']) {
                     $this->federal_states[$country][$federal_state_id] = $federal_state['name'];
-                    $this->federal_states_validator_values[]                   = $federal_state_id;
+                    $this->federal_states_validator_values[]           = $federal_state_id;
                 }
             }
         }
@@ -210,5 +207,4 @@ class baseRealtyFilter extends BaseForm
 
         return $result;
     }
-
 }

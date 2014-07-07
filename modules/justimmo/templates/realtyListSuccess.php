@@ -35,7 +35,7 @@
         <?php foreach ($pager as $realty): ?>
             <a class="<?php echo realty_css_classes($realty); ?>"
                href="<?php echo url_for('@justimmo_realty_detail?id=' . $realty->getId()); ?>"
-               title="<?php echo $realty->getTitle(); ?>">
+               title="<?php echo $realty->getTitle(); ?>" name="<?php echo $realty->getId() ?>">
                 <div class="image">
                     <img alt="<?php echo $realty->getTitle(); ?>"
                          title="<?php echo $realty->getTitle(); ?>"
